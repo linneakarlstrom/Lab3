@@ -1,0 +1,47 @@
+# LAB 1
+# WRITTEN 2022 
+
+.macro 	PUSH (%reg)
+	addi  $sp, $sp, -4
+	sw    %reg, 0($sp)
+.end_macro
+
+.macro  POP (%reg)
+	lw  %reg, 0($sp)
+	addi  $sp, $sp, 4
+.end_macro
+
+
+.text
+main:
+	li   $a0, 1000 # parameter , i millisekunder
+	addi $s0, $0, 0 #parametern
+	
+	jal delay
+	nop
+
+#while loop
+delay:
+	PUSH($s0)
+	PUSH($ra)
+
+	move $s0, $a0 # kopiera a0 till s0 -- detta är arg
+	addi $t0, $0, 0 #index i
+	addi $s1, $0, 47 # i < 4711
+	
+while:
+	ble  $s0, $0, exit  # if ms <= 0 gå ut ur loopen (exit)
+	nop
+	sub  $s0, $s0, 1 # ms = ms - 1
+	addi $t0, $0, 1 # för beq
+	
+loop:	
+	# for loop
+	beq  $t0, $s1, while
+	nop
+	addi $t0, $t0, 1  # i = i + 1
+	j    loop
+	nop		
+exit:
+	POP($ra)
+	POP($s0)
